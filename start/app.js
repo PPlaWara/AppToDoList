@@ -5,6 +5,7 @@ const taskList = document.getElementById("task-list");
 
 // Event listeners
 taskForm.addEventListener("submit", addTask);
+let tasks = [];
 
 function addTask(e) {
   e.preventDefault();
@@ -30,6 +31,7 @@ function addTask(e) {
     type,
   };
 
+  tasks.push(task);
   renderTask(task);
   taskForm.reset();
 }
@@ -46,7 +48,41 @@ function renderTask(task) {
   li.innerHTML = `
     <h3>${task.topic}</h3>
     <p><strong>Description:</strong> ${task.description}</p>
-    <p><strong>Date and Time:</strong> ${new Date(task.dateTime)}</p`;
+    <p><strong>Date and Time:</strong> ${new Date(
+      task.dateTime
+    ).toLocaleString()}</p
+    <p><strong>Type:</strong> ${task.type}</p>
+    <button class="edit-btn">Edit</button>
+    <button class="delete-btn">Delete</button>
+  `;
 
   taskList.appendChild(li);
+}
+
+const filterType = document.getElementById("filter-type");
+const filterDate = document.getElementById("filter-date");
+
+filterType.addEventListener("change", filterTasks);
+filterDate.addEventListener("change", filterTasks);
+
+function filterTasks() {
+  // Clear current task list
+  taskList.innerHTML = "";
+
+  // Get filter values
+  const selectedType = filterType.value;
+  const selectedDate = filterDate.value;
+
+  // Filter tasks based on selected filters
+  const filteredTasks = tasks.filter((task) => {
+    const isTypeMatch = selectedType === "all" || task.type === selectedType;
+    const isDateMatch =
+      selectedDate === "all" ||
+      (selectedDate === "upcoming" && new Date(task.dateTime) > new Date()) ||
+      (selectedDate === "expired" && new Date(task.dateTime) <= new Date());
+
+    return isTypeMatch && isDateMatch;
+  });
+
+  filteredTasks.forEach((task) => renderTask(task));
 }
