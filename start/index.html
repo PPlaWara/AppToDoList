@@ -11,7 +11,7 @@
 
     <form id="task-form">
       <input type="text" id="task-topic" placeholder="Topic" required />
-      <textarea id="task-desc" placeholder="Description" required></textarea>
+      <input id="task-desc" placeholder="Description" required></input>
       <input type="datetime-local" id="task-date" required />
       <select id="task-type" required>
         <option value="" disabled selected>Select Type</option>
@@ -21,7 +21,7 @@
       </select>
       <button type="submit">Add Task</button>
     </form>
-
+    <br /> 
     <div class="filters">
       <select id="filter-type">
         <option value="all">All Types</option>
