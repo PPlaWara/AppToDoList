@@ -58,8 +58,68 @@ function renderTask(task) {
     <button class="edit-btn">Edit</button>
     <button class="delete-btn">Delete</button>
   `;
+  li.querySelector(".edit-btn").addEventListener("click", () =>
+    editTask(task, li)
+  );
 
   taskList.appendChild(li);
+}
+
+function editTask(task, taskElement) {
+  taskElement.innerHTML = `
+    <form class="edit-form">
+    <h3>Topic:
+      <input type="text" name="topic" value="${task.topic}" required /> </h3>
+      <p><strong>Description: <input type="text" name="description" value="${
+        task.description
+      }"required /></strong><br>
+      <p><strong>Date and Time: <input type="datetime-local" name="dateTime" value="${
+        task.dateTime
+      }" required /></strong><br>
+      <p><strong>Type: <select name="type">
+        <option value="Meeting" ${
+          task.type === "Meeting" ? "selected" : ""
+        }>Meeting</option>
+        <option value="Task" ${
+          task.type === "Task" ? "selected" : ""
+        }>Task</option>
+        <option value="Event" ${
+          task.type === "Event" ? "selected" : ""
+        }>Event</option></strong> 
+      </select><br>
+      <br />
+      <button type="submit">Save</button>
+      <button type="button" class="cancel-btn">Cancel</button>
+    </form>
+  `;
+
+  const editForm = taskElement.querySelector(".edit-form");
+  editForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Update task with new values
+    task.topic = editForm.topic.value;
+    task.description = editForm.description.value;
+    task.dateTime = editForm.dateTime.value;
+    task.type = editForm.type.value;
+
+    // Update task
+    const taskUpdate = tasks.findIndex((t) => t.id === task.id);
+    tasks[taskUpdate] = task;
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    // Re-render the task
+    taskElement.innerHTML = "";
+    renderTask(task);
+    location.reload();
+  });
+
+  // cancel button
+  taskElement.querySelector(".cancel-btn").addEventListener("click", () => {
+    taskElement.innerHTML = "";
+    renderTask(task);
+    location.reload();
+  });
 }
 
 const filterType = document.getElementById("filter-type");
