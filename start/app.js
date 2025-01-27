@@ -3,9 +3,10 @@
 const taskForm = document.getElementById("task-form");
 const taskList = document.getElementById("task-list");
 
-// Event listeners
+document.addEventListener("DOMContentLoaded", loadTasks);
+
 taskForm.addEventListener("submit", addTask);
-let tasks = [];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 function addTask(e) {
   e.preventDefault();
@@ -34,6 +35,8 @@ function addTask(e) {
   tasks.push(task);
   renderTask(task);
   taskForm.reset();
+
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function loadTasks() {
