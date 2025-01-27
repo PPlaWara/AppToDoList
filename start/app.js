@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", loadTasks);
 
 taskForm.addEventListener("submit", addTask);
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let filters = JSON.parse(localStorage.getItem("filters")) || {
+  type: "all",
+  date: "all",
+};
 
 function addTask(e) {
   e.preventDefault();
@@ -19,7 +23,7 @@ function addTask(e) {
 
   // Validate inputs
   if (!topic || !description || !dateTime || !type) {
-    alert("Please fill in all fields!");
+    alert("Please input data");
     return;
   }
 
@@ -142,21 +146,25 @@ filterDate.addEventListener("change", filterTasks);
 function filterTasks() {
   // Clear current task list
   taskList.innerHTML = "";
+  filters.type = filterType.value;
+  filters.date = filterDate.value;
+  localStorage.setItem("filters", JSON.stringify(filters));
 
-  // Get filter values
-  const selectedType = filterType.value;
-  const selectedDate = filterDate.value;
-
-  // Filter tasks based on selected filters
   const filteredTasks = tasks.filter((task) => {
-    const isTypeMatch = selectedType === "all" || task.type === selectedType;
+    const isTypeMatch = filters.type === "all" || task.type === filters.type;
     const isDateMatch =
-      selectedDate === "all" ||
-      (selectedDate === "upcoming" && new Date(task.dateTime) > new Date()) ||
-      (selectedDate === "expired" && new Date(task.dateTime) <= new Date());
+      filters.date === "all" ||
+      (filters.date === "upcoming" && new Date(task.dateTime) > new Date()) ||
+      (filters.date === "expired" && new Date(task.dateTime) <= new Date());
 
     return isTypeMatch && isDateMatch;
   });
-
   filteredTasks.forEach((task) => renderTask(task));
+}
+function loadFilters() {
+  // Load saved filters from localStorage
+  if (filters.type) filterType.value = filters.type;
+  if (filters.date) filterDate.value = filters.date;
+
+  filterTasks(); // Apply saved filters
 }
