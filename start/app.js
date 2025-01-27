@@ -61,6 +61,9 @@ function renderTask(task) {
   li.querySelector(".edit-btn").addEventListener("click", () =>
     editTask(task, li)
   );
+  li.querySelector(".delete-btn").addEventListener("click", () =>
+    deleteTask(task.id)
+  );
 
   taskList.appendChild(li);
 }
@@ -120,6 +123,14 @@ function editTask(task, taskElement) {
     renderTask(task);
     location.reload();
   });
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter((task) => task.id !== id);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  const taskElement = document.querySelector(`[data-id="${id}"]`);
+  taskElement.remove();
 }
 
 const filterType = document.getElementById("filter-type");
